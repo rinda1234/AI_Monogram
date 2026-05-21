@@ -31,4 +31,7 @@ def backtracking_search(csp: Any, assignment: Optional[Dict[str, List[int]]] = N
     # ==========================
     # 아래에 코드를 작성하세요.
     # ==========================
+
+    for i in range()
+
     return None
