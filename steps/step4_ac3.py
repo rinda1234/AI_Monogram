@@ -1,4 +1,5 @@
 from typing import Any
+from collections import deque
 from steps.step3_revise import revise
 
 def ac3(csp: Any) -> bool:
@@ -21,4 +22,26 @@ def ac3(csp: Any) -> bool:
     # ==========================
     # 아래에 코드를 작성하세요.
     # ==========================
-    return False
+    # 큐 초기화
+    queue = deque()
+    for R_i in [v for v in csp.variables if v.startswith('R')]:
+        for C_j in [v for v in csp.variables if v.startswith('C')]:
+            # 상호교차하는 모든 엣지쌍 큐에 삽입.
+            queue.append((R_i, C_j))
+            queue.append((C_j, R_i))
+    
+    # 큐가 빌때까지 반복
+    while queue:
+        # 큐에서 원소 하나씩 pop
+        xi, xj = queue.popleft()
+        # 필터링
+        if revise(csp, xi, xj):
+            # xi 의 domain 길이가 0인지 체크
+            if not csp.domains[xi]:
+                return False 
+            # xi의 도메인이 깍여나갔다면 재심사 대기열 올리기
+            for xk in [v for v in csp.variables if v[0] != xi[0] and v != xj]: # xi와 교차하는 다른 모든 이웃 변수들(xk)
+                if (xk, xi) not in queue:
+                    queue.append((xk, xi))        
+
+    return True
