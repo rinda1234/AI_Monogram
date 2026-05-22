@@ -32,6 +32,37 @@ def backtracking_search(csp: Any, assignment: Optional[Dict[str, List[int]]] = N
     # 아래에 코드를 작성하세요.
     # ==========================
 
-    for i in range()
+    # 정답 체크
 
+    if len(assignment) == len(csp.variables):
+        return assignment
+
+    # 후보중에 선택
+    for i in range(len(csp.variables)):
+        target_var = csp.variables[i]
+        # 아직 할당되지 않은 후보중에서 탐색.
+        if target_var not in assignment:
+            for j in range(len(csp.domains[target_var])):
+                # domain을 하나씩 충돌검사
+                target_domain = csp.domains[target_var][j]
+                for key in assignment:
+                    # target_var과 key가 같은 행 또는 열에 속하는지 체크 && 일관성 체크
+                    if key[0] != target_var[0] and not csp.is_consistent(key, assignment[key], target_var, target_domain):
+                        break
+                else:
+                    # assignment에 추가
+                    assignment[target_var] = target_domain
+                    # 재귀적으로 탐색
+                    new_assignment = backtracking_search(csp, assignment, start_time, timeout)
+                    # 정답을 반환했다면 그대로 함수 종료, assignment 반환
+                    if new_assignment is not None:
+                        return new_assignment
+                    # 정답이 아니라면 assignment에서 제거
+                    del assignment[target_var]
+            # 모든 도메인 탐색 후에도 정답이 나오지 않았다면 None 반환  
+            return None
+
+                        
+            
+    # 모든 후보 탐색 후에도 정답이 나오지 않았다면 None 반환
     return None
